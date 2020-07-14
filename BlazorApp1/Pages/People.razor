@@ -1,0 +1,90 @@
+﻿@page "/people"
+@using Microsoft.Extensions.Configuration
+@inject IDataAccess _db
+@inject IConfiguration _config
+<h1>Ledger Detail</h1>
+<form>
+    <input type="text" class="form-control-sm" id="vocno1" @bind="NewLedger.VocNo" placeholder="VocNo">
+    <div class="form-inline">
+        <input type="number" class="form-control-sm" id="vocno1" @bind="NewLedger.VocNo" placeholder="VocNo">
+        <input type="date" class="form-control-sm" id="date1" @bind="NewLedger.Date" placeholder="Date">
+        <input type="number" class="form-control-sm" id="srNo1" @bind="NewLedger.SrNo" placeholder="SrNo">
+        <input type="number" class="form-control-sm" id="partyID" @bind="NewLedger.PartyID" placeholder="Party">
+        <input type="text" class="form-control-sm" id="description1" @bind="NewLedger.Description" placeholder="Description">
+        <input type="number" class="form-control-sm" id="netdebit1" @bind="NewLedger.NetDebit" placeholder="NetDebit">
+        <input type="number" class="form-control-sm" id="netcredit1" @bind="NewLedger.NetCredit" placeholder="NetCredit">
+    </div>
+    <button type="button" class="btn btn-primary" @onclick="Add">Submit</button>
+</form>
+
+<p>@status</p>
+
+@if (lg == null)
+{
+    <p>...Loading</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>VocNo</th>
+                <th>SrNo</th>
+                <th>Date</th>
+                <th>Party</th>
+                <th>Description</th>
+                <th>NetDebit</th>
+                <th>NetCredit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in lg)
+            {
+            <tr>
+                <td>@i.Id</td>
+                <td>@i.VocNo</td>
+                <td>@i.SrNo</td>
+                <td>@i.Date.ToShortDateString()</td>
+                <td>@i.PartyID</td>
+                <td>@i.Description</td>
+                <td>@i.NetDebit</td>
+                <td>@i.NetCredit</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+
+    private List<Ledger> lg;
+    Ledger NewLedger;
+    private string status;
+
+    private async Task Add()
+    {
+        status = NewLedger.Description;
+        lg.Add(NewLedger);
+        string sql = "INSERT INTO tbl_Ledger(VocNo,SrNo,Date,Description,NetDebit,NetCredit) " +
+            "VALUES(@VocNo, @SrNo, @Date, @Description, @NetDebit, @NetCredit);";
+        try
+        {
+            await _db.SaveData(sql,
+                new { VocNo = NewLedger.VocNo, SrNo = NewLedger.SrNo, Date = DateTime.Today, Description = NewLedger.Description, NetDebit = NewLedger.NetDebit, NetCredit = NewLedger.NetCredit },
+                _config.GetConnectionString("default"));
+
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        NewLedger = new Ledger();
+        string sql = "SELECT TOP 5 Id,VocNo,SrNo,Date,PartyID,NetDebit,NetCredit, 0 modified FROM tbl_Ledger";
+        lg = await _db.LoadData<Ledger, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+    }
+}
