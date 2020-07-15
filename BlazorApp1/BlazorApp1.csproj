@@ -5,11 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataLibrary\DataLibrary.csproj" />
+    <Compile Remove="wwwroot\script\**" />
+    <Content Remove="wwwroot\script\**" />
+    <EmbeddedResource Remove="wwwroot\script\**" />
+    <None Remove="wwwroot\script\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\script\" />
+    <None Include="wwwroot\js\jquery\jquery-2.2.4.min.js" />
+    <None Include="wwwroot\js\select2\select2.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataLibrary\DataLibrary.csproj" />
   </ItemGroup>
 
 </Project>
