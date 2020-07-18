@@ -20,11 +20,19 @@ namespace DataLibrary
             }
         }
 
-        public Task SaveData<T>(string sql, T parameters, string connectionString)
+        public Task SaveDataAsync<T>(string sql, T parameters, string connectionString)
         {
             using (IDbConnection con = new SqlConnection(connectionString))
             {
                 return con.ExecuteAsync(sql, parameters);
+            }
+        }
+
+        public void SaveData<T>(string sql, T parameters, string connectionString)
+        {
+            using (IDbConnection con = new SqlConnection(connectionString))
+            {
+                con.Execute(sql, parameters);
             }
         }
     }

@@ -69,7 +69,7 @@ else
             "VALUES(@VocNo, @SrNo, @Date, @Description, @NetDebit, @NetCredit);";
         try
         {
-            await _db.SaveData(sql,
+            await _db.SaveDataAsync(sql,
                 new { VocNo = NewLedger.VocNo, SrNo = NewLedger.SrNo, Date = DateTime.Today, Description = NewLedger.Description, NetDebit = NewLedger.NetDebit, NetCredit = NewLedger.NetCredit },
                 _config.GetConnectionString("default"));
 
