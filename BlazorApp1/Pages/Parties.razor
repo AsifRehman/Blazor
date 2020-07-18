@@ -1,4 +1,7 @@
 ﻿@page "/parties"
+@using Microsoft.Extensions.Configuration
+@inject IDataAccess _db
+@inject IConfiguration _config
 
 <EditForm Model="@model" OnValidSubmit="SubmitForm">
     <div class="form-group">
@@ -15,13 +18,37 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
+    <label>@status</label>
 </EditForm>
 
 @code {
     Party model = new Party();
+    private string status;
 
     private void SubmitForm()
     {
         Console.WriteLine(model);
+        status = model.ToString();
+
     }
+
+    private async Task Add()
+    {
+        model.Add(NewLedger);
+        string sql = "INSERT INTO tbl_Ledger(VocNo,SrNo,Date,Description,NetDebit,NetCredit) " +
+            "VALUES(@VocNo, @SrNo, @Date, @Description, @NetDebit, @NetCredit);";
+        try
+        {
+            await _db.SaveData(sql,
+                new { VocNo = NewLedger.VocNo, SrNo = NewLedger.SrNo, Date = DateTime.Today, Description = NewLedger.Description, NetDebit = NewLedger.NetDebit, NetCredit = NewLedger.NetCredit },
+                _config.GetConnectionString("default"));
+
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+    }
+
 }
