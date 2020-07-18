@@ -1,0 +1,27 @@
+﻿@page "/parties"
+
+<EditForm Model="@model" OnValidSubmit="SubmitForm">
+    <div class="form-group">
+        <label for="partyID">PartyID</label>
+        <InputNumber id="partyID" @bind-Value="@model.Id"></InputNumber>
+    </div>
+    <div class="form-group">
+        <label for="PartyName">PartyName</label>
+        <InputText id="partyName" @bind-Value="@model.PartyName"></InputText>
+    </div>
+    <div class="form-group">
+        <label for="partyTypeID">PartyTypeID</label>
+        <InputNumber id="partyTypeID" @bind-Value="@model.PartyTypeID"></InputNumber>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    Party model = new Party();
+
+    private void SubmitForm()
+    {
+        Console.WriteLine(model);
+    }
+}
